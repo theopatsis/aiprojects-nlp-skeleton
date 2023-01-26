@@ -9,7 +9,7 @@ class StartingNetwork(torch.nn.Module):
 
     def __init__(self):
         super().__init__()
-        self.fc1 = nn.Linear(12122002, 50) # What could that number mean!?!?!? Ask an officer to find out :)
+        self.fc1 = nn.Linear(110, 50) # What could that number mean!?!?!? Ask an officer to find out :)
         self.fc2 = nn.Linear(50, 10)
         self.sigmoid = nn.Sigmoid()
 

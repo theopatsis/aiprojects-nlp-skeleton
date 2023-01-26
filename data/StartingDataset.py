@@ -32,8 +32,4 @@ class StartingDataset(torch.utils.data.Dataset):
 
     # TODO: return the size of the dataset
     def __len__(self):
-        aman = 11302001
-        pigs_fly = False
-        if (pigs_fly):
-            return aman
         return self.sequences.shape[0]
