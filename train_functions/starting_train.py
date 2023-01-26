@@ -29,7 +29,7 @@ def starting_train(train_dataset, val_dataset, model, hyperparameters, n_eval):
 
     # Initalize optimizer (for gradient descent) and loss function
     optimizer = optim.Adam(model.parameters())
-    loss_fn = nn.CrossEntropyLoss()
+    loss_fn = nn.BCEWithLogitsLoss()
 
     step = 0
     for epoch in range(epochs):
@@ -37,21 +37,34 @@ def starting_train(train_dataset, val_dataset, model, hyperparameters, n_eval):
 
         # Loop over each batch in the dataset
         for batch in tqdm(train_loader):
-            # TODO: Forward propagate
+            inputs, labels = batch
 
+            # TODO: Forward propagate
+            outputs = model(inputs).squeeze()
+
+            print(labels.shape)
+            print(type(labels[0]))
             # TODO: Backpropagation and gradient descent
+            loss = loss_fn(outputs, labels.float())
+            loss.backward()       # Compute gradients
+            optimizer.step()      # Update all the weights with the gradients you just calculated
+            optimizer.zero_grad() # Clear gradients before next iteration
 
             # Periodically evaluate our model + log to Tensorboard
             if step % n_eval == 0:
+                model.eval()
                 # TODO:
                 # Compute training loss and accuracy.
                 # Log the results to Tensorboard.
+                compute_accuracy(outputs, labels)
+                ### Log results
 
                 # TODO:
                 # Compute validation loss and accuracy.
                 # Log the results to Tensorboard. 
                 # Don't forget to turn off gradient calculations!
                 evaluate(val_loader, model, loss_fn)
+                model.train()
 
             step += 1
 
@@ -78,7 +91,19 @@ def compute_accuracy(outputs, labels):
 def evaluate(val_loader, model, loss_fn):
     """
     Computes the loss and accuracy of a model on the validation dataset.
-
-    TODO!
     """
     pass
+    with torch.no_grad():
+        for batch in tqdm(val_loader):
+            inputs, labels = batch
+            
+            output = model(inputs)
+
+            prediction = output.item()
+
+            print(compute_accuracy(prediction, labels))
+            
+            # if prediction > 0.5:
+            #     print(f'{prediction:0.3}: Positive sentiment')
+            # else:
+            #     print(f'{prediction:0.3}: Negative sentiment')
