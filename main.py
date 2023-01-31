@@ -2,6 +2,7 @@ import os
 
 import constants
 from data.StartingDataset import StartingDataset
+from data.ValDataset import ValidationDataset
 from networks.StartingNetwork import StartingNetwork
 from train_functions.starting_train import starting_train
 
@@ -18,9 +19,10 @@ def main():
 
     # Initalize dataset and model. Then train the model!
     data_path = "train.csv" #TODO: make sure you have train.csv downloaded in your project! this assumes it is in the project's root directory (ie the same directory as main) but you can change this as you please
+    data_path_val = "train.csv"
 
     train_dataset = StartingDataset(data_path)
-    val_dataset = StartingDataset(data_path)
+    val_dataset = ValidationDataset(data_path_val)
     model = StartingNetwork()
     starting_train(
         train_dataset=train_dataset,

@@ -33,17 +33,16 @@ def starting_train(train_dataset, val_dataset, model, hyperparameters, n_eval):
 
     step = 0
     for epoch in range(epochs):
-        print(f"Epoch {epoch + 1} of {epochs}")
+        # print(f"Epoch {epoch + 1} of {epochs}")
 
         # Loop over each batch in the dataset
         for batch in tqdm(train_loader):
             inputs, labels = batch
-
             # TODO: Forward propagate
             outputs = model(inputs).squeeze()
 
-            print(labels.shape)
-            print(type(labels[0]))
+            # print(labels.shape)
+            # print(type(labels[0]))
             # TODO: Backpropagation and gradient descent
             loss = loss_fn(outputs, labels.float())
             loss.backward()       # Compute gradients
@@ -52,6 +51,7 @@ def starting_train(train_dataset, val_dataset, model, hyperparameters, n_eval):
 
             # Periodically evaluate our model + log to Tensorboard
             if step % n_eval == 0:
+                print("Evaluating")
                 model.eval()
                 # TODO:
                 # Compute training loss and accuracy.
@@ -65,7 +65,6 @@ def starting_train(train_dataset, val_dataset, model, hyperparameters, n_eval):
                 # Don't forget to turn off gradient calculations!
                 evaluate(val_loader, model, loss_fn)
                 model.train()
-
             step += 1
 
         print()
@@ -92,18 +91,18 @@ def evaluate(val_loader, model, loss_fn):
     """
     Computes the loss and accuracy of a model on the validation dataset.
     """
-    pass
     with torch.no_grad():
+        cnt = 0
+        acc = 0
+        loss = 0
         for batch in tqdm(val_loader):
+            cnt += 1
             inputs, labels = batch
             
-            output = model(inputs)
+            outputs = model(inputs).squeeze()
 
-            prediction = output.item()
+            acc += (compute_accuracy(outputs, labels))
+            loss += (loss_fn(outputs, labels.float()))
+        print(acc / cnt)
+        print(loss / cnt)
 
-            print(compute_accuracy(prediction, labels))
-            
-            # if prediction > 0.5:
-            #     print(f'{prediction:0.3}: Positive sentiment')
-            # else:
-            #     print(f'{prediction:0.3}: Negative sentiment')
