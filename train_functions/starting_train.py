@@ -103,6 +103,6 @@ def evaluate(val_loader, model, loss_fn):
 
             acc += (compute_accuracy(outputs, labels))
             loss += (loss_fn(outputs, labels.float()))
-        print(acc / cnt)
-        print(loss / cnt)
+        print("Accuracy: " + str(acc / cnt))
+        print("Loss: " + str(loss / cnt))
 
