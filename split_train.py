@@ -5,14 +5,13 @@ data = pd.read_csv("train.csv")
 
 # no of csv files with row size
 k = 2
-size = 363000
+size_train = 1044896
+size_val = 261216 + size_train
 
-for i in range(k):
-    df = data[size * i:size * (i + 1)]
-    df.to_csv(f'train_{i + 1}.csv', index=False)
+print(data.shape)
 
-df_1 = pd.read_csv("train_1.csv")
-df_1.to_csv("train_split_new.csv")
+df = data[0:size_train]
+df.to_csv(f'train_80.csv', index=False)
 
-df_2 = pd.read_csv("train_2.csv")
-df_2.to_csv("val_new.csv")
+df = data[size_train:size_val]
+df.to_csv(f'train_val_20.csv', index=False)
