@@ -29,30 +29,42 @@ def starting_train(train_dataset, val_dataset, model, hyperparameters, n_eval):
 
     # Initalize optimizer (for gradient descent) and loss function
     optimizer = optim.Adam(model.parameters())
-    loss_fn = nn.CrossEntropyLoss()
+    loss_fn = nn.BCEWithLogitsLoss()
 
     step = 0
     for epoch in range(epochs):
-        print(f"Epoch {epoch + 1} of {epochs}")
+        # print(f"Epoch {epoch + 1} of {epochs}")
 
         # Loop over each batch in the dataset
         for batch in tqdm(train_loader):
+            inputs, labels = batch
             # TODO: Forward propagate
+            outputs = model(inputs).squeeze()
 
+            # print(labels.shape)
+            # print(type(labels[0]))
             # TODO: Backpropagation and gradient descent
+            loss = loss_fn(outputs, labels.float())
+            loss.backward()       # Compute gradients
+            optimizer.step()      # Update all the weights with the gradients you just calculated
+            optimizer.zero_grad() # Clear gradients before next iteration
 
             # Periodically evaluate our model + log to Tensorboard
             if step % n_eval == 0:
+                print("Evaluating")
+                model.eval()
                 # TODO:
                 # Compute training loss and accuracy.
                 # Log the results to Tensorboard.
+                compute_accuracy(outputs, labels)
+                ### Log results
 
                 # TODO:
                 # Compute validation loss and accuracy.
                 # Log the results to Tensorboard. 
                 # Don't forget to turn off gradient calculations!
                 evaluate(val_loader, model, loss_fn)
-
+                model.train()
             step += 1
 
         print()
@@ -78,7 +90,19 @@ def compute_accuracy(outputs, labels):
 def evaluate(val_loader, model, loss_fn):
     """
     Computes the loss and accuracy of a model on the validation dataset.
-
-    TODO!
     """
-    pass
+    with torch.no_grad():
+        cnt = 0
+        acc = 0
+        loss = 0
+        for batch in tqdm(val_loader):
+            cnt += 1
+            inputs, labels = batch
+            
+            outputs = model(inputs).squeeze()
+
+            acc += (compute_accuracy(outputs, labels))
+            loss += (loss_fn(outputs, labels.float()))
+        print("Accuracy: " + str(acc / cnt))
+        print("Loss: " + str(loss / cnt))
+
