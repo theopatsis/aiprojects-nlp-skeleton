@@ -1,6 +1,5 @@
 import torch
 import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
 
 class StartingDataset(torch.utils.data.Dataset):
@@ -17,9 +16,6 @@ class StartingDataset(torch.utils.data.Dataset):
         # Preprocess the data. These are just library function calls so it's here for you
         # self.df = pd.read_csv(data_path, nrows=1175489)
         self.df = pd.read_csv(data_path)
-
-        self.vectorizer = CountVectorizer(stop_words='english', max_df=0.99, min_df=0.005)
-        self.sequences = self.vectorizer.fit_transform(self.df.question_text.tolist()) # matrix of word counts for each sample
         self.labels = self.df.target.tolist() # list of labels
         print(self.sequences.shape)
         self.data_df = self.oversample(pd.DataFrame({"data": self.sequences.toarray().tolist(),
@@ -32,7 +28,7 @@ class StartingDataset(torch.utils.data.Dataset):
     def oversample(self, df):
         sincere = df[df["target"] == 0].copy()
         insincere = df[df["target"] == 1].copy()
-        upsampled = insincere.sample(round(len(sincere.index)/2), axis=0, replace = True, ignore_index = True)
+        upsampled = insincere.sample(round(len(sincere.index)/1.8), axis=0, replace = True, ignore_index = True)
         return pd.concat([sincere, upsampled], axis=0, ignore_index = True)
 
     # TODO: return an instance from the dataset
