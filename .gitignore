@@ -3,3 +3,4 @@ __pycache__
 *.csv
 datasets
 training_summaries
+*.txt

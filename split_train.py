@@ -7,7 +7,7 @@ def upsample_insincere(df):
     return pd.concat([sincere, upsampled], axis=0, ignore_index = True)
 
 # read DataFrame
-data = pd.read_csv("datasets/train.csv")
+data = pd.read_csv("/train.csv")
 
 # no of csv files with row size
 k = 2
