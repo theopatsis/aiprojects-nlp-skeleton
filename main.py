@@ -35,8 +35,8 @@ def main():
     # )
 
     
-    train_dataset = LSTMDataset(data_path)
-    val_dataset = LSTMDataset(data_path_val)
+    train_dataset = LSTMDataset(data_path, "train_glove.csv")
+    val_dataset = LSTMDataset(data_path_val, "val_glove.csv")
     model = LSTMNetwork(train_dataset.getEmbs())
     starting_train(
         train_dataset=train_dataset,

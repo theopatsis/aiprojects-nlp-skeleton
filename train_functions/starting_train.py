@@ -27,6 +27,8 @@ def starting_train(train_dataset, val_dataset, model, hyperparameters, n_eval):
     val_loader = torch.utils.data.DataLoader(
         val_dataset, batch_size=batch_size, shuffle=True
     )
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
     # Initalize optimizer (for gradient descent) and loss function
     optimizer = optim.Adam(model.parameters())
@@ -46,22 +48,23 @@ def starting_train(train_dataset, val_dataset, model, hyperparameters, n_eval):
         loss = 0 # Loss per batch, cumulative.
 
         for batch in tqdm(train_loader):
-            inputs, labels = batch
+            target = batch['labels'].to(device)
+
             # Forward propagate
-            outputs = model(inputs).squeeze()
+            outputs = model(batch).squeeze()
 
             
             # Backpropagation and gradient descent
-            loss = loss_fn(outputs, labels.float())
+            loss = loss_fn(outputs.squeeze(), target)
             loss.backward()       # Compute gradients
             optimizer.step()      # Update all the weights with the gradients you just calculated
             optimizer.zero_grad() # Clear gradients before next iteration
 
             # Cumulate tickers.
-            f1_scores.append(metric(outputs, torch.Tensor(labels)))
-            confmats.append(confmat(outputs, torch.Tensor(labels)))
-            acc += (compute_accuracy(outputs, labels))
-            loss += (loss_fn(outputs, labels.float()))
+            f1_scores.append(metric(outputs.squeeze(), torch.Tensor(target)))
+            confmats.append(confmat(outputs.squeeze(), torch.Tensor(target)))
+            acc += (compute_accuracy(outputs.squeeze(), target))
+            loss += (loss_fn(outputs.squeeze(), target))
             cnt += 1
 
             # Periodically evaluate our model + log to Tensorboard
@@ -78,7 +81,7 @@ def starting_train(train_dataset, val_dataset, model, hyperparameters, n_eval):
                 model.eval()
 
                 # Print out model performance during evaluation phase.
-                compute_accuracy(outputs, labels)
+                compute_accuracy(outputs.squeeze(), target)
                 ### Log results
 
                 # TODO:

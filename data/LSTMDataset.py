@@ -5,7 +5,7 @@ import constants
 
 
 class LSTMDataset(torch.utils.data.Dataset):
-    def __init__(self, data_path):
+    def __init__(self, data_path, outputFile):
         vocab,embeddings = [],[]
 
         with open('glove.6B.50d.txt','rt', encoding="utf8") as fi:
@@ -24,8 +24,6 @@ class LSTMDataset(torch.utils.data.Dataset):
         vocab_npa = np.array(vocab)
         embs_npa = np.array(embeddings)
 
-        self.vocab_npa = vocab_npa
-        self.embs_npa = embs_npa
 
         vocab_npa = np.insert(vocab_npa, 0, '<pad>')
         vocab_npa = np.insert(vocab_npa, 1, '<unk>')
@@ -66,6 +64,11 @@ class LSTMDataset(torch.utils.data.Dataset):
         assert len(self.input_ids) == df.shape[0]
         assert len(self.sequence_lens) == df.shape[0]
         assert len(self.labels) == df.shape[0]
+
+        self.vocab_npa = vocab_npa
+        self.embs_npa = embs_npa
+
+        # df.to_csv(outputFile, index=False)
 
     def convert_text_to_input_ids(self,text,pad_to_len):
         # truncate excess words (beyond the length we should pad to)
