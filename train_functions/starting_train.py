@@ -126,6 +126,17 @@ def evaluate(val_loader, model, loss_fn):
         running_corrects = 0
         for batch in tqdm(val_loader):
             cnt += 1
+            target = batch['labels'].to(device)
+
+            # Forward propagate
+            outputs = model(batch).squeeze()
+            loss += loss_fn(outputs.squeeze(), target)
+            acc += (compute_accuracy(outputs.squeeze(), target))
+            running_corrects += torch.sum(outputs.squeeze() == target)
+
+            f1_scores.append(metric(outputs.squeeze(), torch.Tensor(target)))
+            confmats.append(confmat(outputs.squeeze(), torch.Tensor(target)))
+            """
             inputs, labels = batch
             
             outputs = model(inputs).squeeze()
@@ -138,6 +149,7 @@ def evaluate(val_loader, model, loss_fn):
             #print(torch.round(outputs[0]))  
             f1_scores.append(metric(outputs, torch.Tensor(labels)))
             confmats.append(confmat(outputs, torch.Tensor(labels)))
+            """
 
         print("Accuracy: " + str(acc / cnt))
         print("Loss: " + str(loss / cnt))
