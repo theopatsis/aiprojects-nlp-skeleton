@@ -14,4 +14,4 @@ Next, install all required libraries and run it.
   conda install pytorch torchvision pandas matplotlib jupyter tqdm tensorboard transformers torchmetrics
   python main.py
 ```
-The code will run through all batches and print training accuracy, F1 score and the confusion matrix for each batch.
+The code will output accuracy and F1 score statistics for our training set as well as test set.
