@@ -8,3 +8,10 @@ First, clone the GitHub repo and move to the correct directory.
   cd aiprojects-nlp-skeleton
   conda activate env
 ```
+
+Next, install all required libraries and run it.
+```bash
+  conda install pytorch torchvision pandas matplotlib jupyter tqdm tensorboard transformers torchmetrics
+  python main.py
+```
+The code will run through the entire test set
